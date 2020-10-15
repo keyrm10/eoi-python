@@ -1,0 +1,59 @@
+---
+- name: Create uWSGI directory hierarchy
+  become: yes
+  file:
+    path: "{{ vassals_dir }}"
+    state: directory
+    recurse: yes
+
+- name: Create log directory
+  become: yes
+  file:
+    path: "{{ uwsgi_log_dir }}"
+    state: directory
+
+- name: Create log file
+  become: yes
+  file:
+    path: "{{ uwsgi_log_dir }}/{{ app_name }}.log"
+    state: touch
+    owner: "{{ uid }}"
+
+- name: Vassal configuration
+  become: yes
+  template:
+    src: templates/vassal.ini
+    dest: "{{ app_dir }}/uwsgi.ini"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create vassal configuration symbolic link
+  become: yes
+  file:
+    src: "{{ app_dir }}/uwsgi.ini"
+    dest: "{{ vassals_dir }}/{{ app_name }}.ini"
+    state: link
+
+- name: Emperor configuration
+  become: yes
+  template:
+    src: templates/emperor.ini
+    dest: "{{ uwsgi_dir }}/emperor.ini"
+
+- name: Create uWSGI emperor service
+  become: yes
+  copy:
+    src: files/uwsgi-emperor.service
+    dest: /etc/systemd/system/uwsgi-emperor.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable uWSGI emperor service
+  become: yes
+  systemd:
+    daemon_reload: yes
+    name: uwsgi-emperor
+    state: started
+    enabled: yes

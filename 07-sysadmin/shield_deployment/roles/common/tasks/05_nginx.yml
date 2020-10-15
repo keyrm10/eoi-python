@@ -1,0 +1,28 @@
+---
+- name: Remove Nginx default site
+  become: yes
+  file:
+    path: "{{ nginx_enabled_sites }}/default"
+    state: absent
+
+- name: Create Nginx configuration file
+  become: yes
+  copy:
+    src: files/nginx_shield.conf
+    dest: "{{ nginx_available_sites }}/{{ app_name }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create symbolic link
+  become: yes
+  file:
+    src: "{{ nginx_available_sites }}/{{ app_name }}.conf"
+    dest: "{{ nginx_enabled_sites }}/{{ app_name }}.conf"
+    state: link
+
+- name: Restart Nginx service
+  become: yes
+  systemd:
+    state: restarted
+    name: nginx

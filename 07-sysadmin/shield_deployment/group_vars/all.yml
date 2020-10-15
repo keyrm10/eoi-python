@@ -1,0 +1,18 @@
+---
+app_name: shield
+app_dir: "/var/www/{{ app_name }}"
+venv_dir: "{{ app_dir }}/venv"
+repository_url: https://github.com/keyrm10/shield.git
+uid: www-data
+gid: www-data
+dumpdata: "{{ app_dir }}/metahumans/dumpdata.json"
+
+# uWSGI
+uwsgi_dir: /etc/uwsgi
+vassals_dir: "{{ uwsgi_dir }}/vassals"
+uwsgi_log_dir: /var/log/uwsgi
+
+# Nginx
+nginx_dir: /etc/nginx
+nginx_available_sites: "{{ nginx_dir }}/sites-available"
+nginx_enabled_sites: "{{ nginx_dir }}/sites-enabled"

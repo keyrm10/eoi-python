@@ -1,0 +1,13 @@
+---
+- name: Install required apt packages
+  become: yes
+  apt:
+    name: ['git', 'nginx', 'python3-pip', 'virtualenv']
+    state: latest
+    update_cache: yes
+
+- name: Install required pip packages
+  become: yes
+  pip:
+    name: uwsgi
+    executable: pip3

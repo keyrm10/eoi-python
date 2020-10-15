@@ -1,0 +1,28 @@
+---
+- name: Create app directory
+  become: yes
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+
+- name: Clone git repository
+  become: yes
+  git:
+    repo: "{{ repository_url }}"
+    dest: "{{ app_dir }}"
+    force: yes
+
+- name: Create virtual environment
+  become: yes
+  pip:
+    requirements: "{{ app_dir }}/requirements.txt"
+    virtualenv: "{{ venv_dir }}"
+
+- name: Set permissions for base directory
+  become: yes
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ uid }}"
+    group: "{{ gid }}"

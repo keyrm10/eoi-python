@@ -1,0 +1,5 @@
+---
+- name: Django web application deployment (Nginx and uWSGI)
+  hosts: all
+  roles:
+    - common

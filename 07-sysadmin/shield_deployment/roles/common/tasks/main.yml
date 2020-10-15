@@ -1,0 +1,6 @@
+---
+- include: 01_packages.yml
+- include: 02_venv.yml
+- include: 03_django.yml
+- include: 04_uwsgi.yml
+- include: 05_nginx.yml

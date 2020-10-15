@@ -1,0 +1,40 @@
+---
+- name: Django make migrations
+  django_manage:
+    command: makemigrations
+    app_path: "{{ app_dir }}"
+    virtualenv: "{{ venv_dir }}"
+
+- name: Django migrate database
+  django_manage:
+    command: migrate
+    app_path: "{{ app_dir }}"
+    virtualenv: "{{ venv_dir }}"
+
+- name: Django load data
+  become: yes
+  django_manage:
+    command: loaddata
+    app_path: "{{ app_dir }}"
+    fixtures: "{{ dumpdata }}"
+    virtualenv: "{{ venv_dir }}"
+
+- name: Add STATIC_ROOT to Django settings
+  become: yes
+  lineinfile:
+    path: "{{ app_dir }}/shield/settings.py"
+    line: "STATIC_ROOT = os.path.join(BASE_DIR, 'static/')"
+
+- name: Gather all static files
+  become: yes
+  django_manage:
+    command: collectstatic
+    app_path: "{{ app_dir }}"
+    virtualenv: "{{ venv_dir }}"
+
+- name: Add localhost to ALLOWED_HOSTS
+  become: yes
+  lineinfile:
+    path: "{{ app_dir }}/shield/settings.py"
+    regexp: "^ALLOWED_HOSTS"
+    line: ALLOWED_HOSTS = ['192.168.2.2', 'localhost', '127.0.0.1']
